@@ -1,0 +1,26 @@
+{
+    "cSpell.words": [
+        "baudrate",
+        "binrw",
+        "Bitfield",
+        "Bitfields",
+        "bondrewd",
+        "bytemuck",
+        "defmt",
+        "degain",
+        "dgain",
+        "dvgain",
+        "fgain",
+        "Filt",
+        "fsatu",
+        "igain",
+        "iosh",
+        "PCDE",
+        "PCDV",
+        "pgain",
+        "repr",
+        "Satu",
+        "Softstart",
+        "usbserial"
+    ]
+}

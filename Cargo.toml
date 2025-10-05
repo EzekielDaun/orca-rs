@@ -1,0 +1,19 @@
+[package]
+    edition = "2024"
+    name    = "orca-rs"
+    version = "0.1.0"
+
+[dependencies]
+    anyhow             = "1.0.100"
+    binrw              = { version = "0.15.0" }
+    bondrewd           = { version = "*", features = ["derive"] }
+    bytemuck           = "*"
+    crc                = "3.3.0"
+    defmt              = "*"
+    embedded-registers = "0.9.13"
+    log                = {version="0.4.28"}
+    num_enum           = { version = "0.7.4" }
+    rmodbus            = "0.12.2"
+    tokio              = { version = "1.47.1", features = ["full"] }
+    tokio-serial       = "*"
+    futures            = "0.3"
