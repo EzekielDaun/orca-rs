@@ -1,6 +1,7 @@
 use bondrewd::BitfieldEnum;
 use embedded_registers::register;
 use num_enum::{IntoPrimitive, TryFromPrimitive};
+use serde::{Deserialize, Serialize};
 
 #[repr(u8)]
 #[derive(
@@ -11,6 +12,8 @@ use num_enum::{IntoPrimitive, TryFromPrimitive};
     Debug,
     Default,
     defmt::Format,
+    Deserialize,
+    Serialize,
     IntoPrimitive,
     TryFromPrimitive,
     Copy,
@@ -36,6 +39,8 @@ pub enum OrcaModeOfOperation {
     Debug,
     Default,
     defmt::Format,
+    Deserialize,
+    Serialize,
     IntoPrimitive,
     TryFromPrimitive,
     Copy,
@@ -59,6 +64,8 @@ pub enum OrcaZeroMode {
     Debug,
     Default,
     defmt::Format,
+    Deserialize,
+    Serialize,
     IntoPrimitive,
     TryFromPrimitive,
     Copy,

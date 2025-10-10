@@ -2,6 +2,7 @@ use crate::register_map::OrcaModeOfOperation;
 use binrw::{BinRead, BinWrite, binrw, io::Cursor};
 use bondrewd::Bitfields;
 use num_enum::{IntoPrimitive, TryFromPrimitive};
+use serde::{Deserialize, Serialize};
 
 fn check_adu_crc(data: &[u8]) -> bool {
     let crc = crc::Crc::<u16>::new(&crc::CRC_16_MODBUS);
@@ -12,7 +13,7 @@ fn check_adu_crc(data: &[u8]) -> bool {
 
 #[binrw]
 #[brw(big)]
-#[derive(Debug, PartialEq, Eq, Copy, Clone)]
+#[derive(Debug, PartialEq, Eq, Copy, Clone, Deserialize, Serialize)]
 pub struct OrcaHighSpeedRequestADU {
     pub slave_address: u8,
     pub pdu: OrcaHighSpeedRequestPDU,
@@ -53,7 +54,7 @@ impl OrcaHighSpeedRequestADU {
 
 #[binrw]
 #[brw(big)]
-#[derive(Debug, PartialEq, Eq, Copy, Clone)]
+#[derive(Debug, PartialEq, Eq, Copy, Clone, Deserialize, Serialize)]
 pub struct OrcaHighSpeedResponseADU {
     pub slave_address: u8,
     pub pdu: OrcaHighSpeedResponsePDU,
@@ -73,7 +74,7 @@ impl OrcaHighSpeedResponseADU {
 
 #[binrw]
 #[brw(big)]
-#[derive(Debug, PartialEq, Eq, Copy, Clone)]
+#[derive(Debug, PartialEq, Eq, Copy, Clone, Deserialize, Serialize)]
 pub enum OrcaHighSpeedRequestPDU {
     #[brw(magic = 0x41u8)]
     Manage(ManageHighSpeedRequestPDUPayload),
@@ -87,7 +88,7 @@ pub enum OrcaHighSpeedRequestPDU {
 
 #[binrw]
 #[brw(big)]
-#[derive(Debug, PartialEq, Eq, Copy, Clone)]
+#[derive(Debug, PartialEq, Eq, Copy, Clone, Deserialize, Serialize)]
 pub enum OrcaHighSpeedResponsePDU {
     #[brw(magic = 0x41u8)]
     Manage(ManageHighSpeedResponsePDUPayload),
@@ -102,7 +103,9 @@ pub enum OrcaHighSpeedResponsePDU {
 #[repr(u8)]
 #[binrw]
 #[brw(repr=u8)]
-#[derive(Debug, PartialEq, Eq, IntoPrimitive, TryFromPrimitive, Copy, Clone)]
+#[derive(
+    Debug, PartialEq, Eq, IntoPrimitive, TryFromPrimitive, Copy, Clone, Deserialize, Serialize,
+)]
 pub enum FunctionCode {
     Manage = 0x41,
     Command = 0x64,
@@ -113,7 +116,18 @@ pub enum FunctionCode {
 #[repr(u16)]
 #[binrw]
 #[brw(repr=u16)]
-#[derive(Debug, PartialEq, Eq, IntoPrimitive, TryFromPrimitive, Default, Copy, Clone)]
+#[derive(
+    Debug,
+    PartialEq,
+    Eq,
+    IntoPrimitive,
+    TryFromPrimitive,
+    Default,
+    Copy,
+    Clone,
+    Deserialize,
+    Serialize,
+)]
 pub enum ManageHighSpeedRequestSubFunctionCode {
     Enable = 0xFF00,
     #[default]
@@ -122,7 +136,7 @@ pub enum ManageHighSpeedRequestSubFunctionCode {
 
 #[binrw]
 #[brw(big)]
-#[derive(Debug, PartialEq, Eq, Default, Copy, Clone)]
+#[derive(Debug, PartialEq, Eq, Default, Copy, Clone, Deserialize, Serialize)]
 pub struct ManageHighSpeedRequestPDUPayload {
     pub sub_function_code: ManageHighSpeedRequestSubFunctionCode,
     pub baud_rate: u32,
@@ -131,7 +145,7 @@ pub struct ManageHighSpeedRequestPDUPayload {
 
 #[binrw]
 #[brw(big)]
-#[derive(Debug, PartialEq, Eq, Copy, Clone)]
+#[derive(Debug, PartialEq, Eq, Copy, Clone, Deserialize, Serialize)]
 pub struct ManageHighSpeedResponsePDUPayload {
     pub state_command: ManageHighSpeedRequestSubFunctionCode,
     pub baud_rate: u32,
@@ -140,7 +154,7 @@ pub struct ManageHighSpeedResponsePDUPayload {
 
 #[binrw]
 #[brw(big)]
-#[derive(Debug, PartialEq, Eq, Copy, Clone)]
+#[derive(Debug, PartialEq, Eq, Copy, Clone, Deserialize, Serialize)]
 pub enum MotorCommandRequestPDUPayload {
     #[brw(magic = 0x1Cu8)]
     ForceControlStream { force_mn: i32 },
@@ -166,7 +180,7 @@ pub enum MotorCommandRequestPDUPayload {
     },
 }
 
-#[derive(Bitfields, Debug, PartialEq, Eq, Clone, Copy, Default)]
+#[derive(Bitfields, Debug, PartialEq, Eq, Clone, Copy, Default, Deserialize, Serialize)]
 #[bondrewd(default_endianness = "le", read_from = "lsb0", enforce_bytes = 2)]
 pub struct OrcaErrors {
     pub configuration_errors: bool,
@@ -199,7 +213,7 @@ impl From<OrcaErrors> for u16 {
 
 #[binrw]
 #[brw(big)]
-#[derive(Debug, PartialEq, Eq, Copy, Clone)]
+#[derive(Debug, PartialEq, Eq, Copy, Clone, Deserialize, Serialize)]
 pub struct MotorCommandResponsePDUPayload {
     pub position_um: i32,
     pub force_mn: i32,
@@ -213,7 +227,7 @@ pub struct MotorCommandResponsePDUPayload {
 
 #[binrw]
 #[brw(big)]
-#[derive(Debug, PartialEq, Eq, Copy, Clone)]
+#[derive(Debug, PartialEq, Eq, Copy, Clone, Deserialize, Serialize)]
 pub struct MotorReadRequestPDUPayload {
     pub register_address: u16,
     pub register_width: u8,
@@ -221,7 +235,7 @@ pub struct MotorReadRequestPDUPayload {
 
 #[binrw]
 #[brw(big)]
-#[derive(Debug, PartialEq, Eq, Copy, Clone)]
+#[derive(Debug, PartialEq, Eq, Copy, Clone, Deserialize, Serialize)]
 pub struct MotorReadResponsePDUPayload {
     pub read_register_value: u32,
     #[br(map=|x: u8| OrcaModeOfOperation::try_from(x).unwrap_or_default())]
@@ -232,7 +246,7 @@ pub struct MotorReadResponsePDUPayload {
 
 #[binrw]
 #[brw(big)]
-#[derive(Debug, PartialEq, Eq, Copy, Clone)]
+#[derive(Debug, PartialEq, Eq, Copy, Clone, Deserialize, Serialize)]
 pub struct MotorWriteRequestPDUPayload {
     pub register_address: u16,
     pub register_width: u8,
@@ -241,7 +255,7 @@ pub struct MotorWriteRequestPDUPayload {
 
 #[binrw]
 #[brw(big)]
-#[derive(Debug, PartialEq, Eq, Copy, Clone)]
+#[derive(Debug, PartialEq, Eq, Copy, Clone, Deserialize, Serialize)]
 pub struct MotorWriteResponsePDUPayload {
     #[br(map=|x: u8| OrcaModeOfOperation::try_from(x).unwrap_or_default())]
     #[bw(map=|x: &OrcaModeOfOperation| <u8 as From<OrcaModeOfOperation>>::from(*x))]
