@@ -1,14 +1,11 @@
-use anyhow;
 use futures::future::try_join_all;
 use orca_rs::OrcaMotor;
 use orca_rs::pdu_payload::OrcaHighSpeedResponsePDU;
-use tokio;
-use tokio_serial::SerialStream;
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
     // Serial ports for multiple motors (adjust to your devices)
-    let mut motors: Vec<OrcaMotor> = [
+    let mut motors: Vec<OrcaMotor<_>> = [
         "/dev/tty.usbserial-FT878BFG",
         "/dev/tty.usbserial-FT8ESWCO",
         "/dev/tty.usbserial-FT8F0YKB",
@@ -24,7 +21,8 @@ async fn main() -> anyhow::Result<()> {
         let builder = tokio_serial::new(*tty, 115200)
             .parity(tokio_serial::Parity::Even)
             .timeout(std::time::Duration::from_millis(1));
-        let port = SerialStream::open(&builder)?;
+        let port = tokio_serial::SerialStream::open(&builder)?;
+        let port = embedded_io_adapters::tokio_1::FromTokio::new(port);
         Ok(OrcaMotor::new(port))
     })
     .collect::<Result<_, anyhow::Error>>()?;

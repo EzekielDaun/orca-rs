@@ -270,6 +270,32 @@ dependencies = [
 ]
 
 [[package]]
+name = "embedded-io"
+version = "0.7.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9eb1aa714776b75c7e67e1da744b81a129b3ff919c8712b5e1b32252c1f07cc7"
+
+[[package]]
+name = "embedded-io-adapters"
+version = "0.7.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c900a1c087f1f7d17cdc84a1290df91521cd90933efa76d68e568385d889f2f4"
+dependencies = [
+ "embedded-io",
+ "embedded-io-async",
+ "tokio",
+]
+
+[[package]]
+name = "embedded-io-async"
+version = "0.7.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2564b9f813c544241430e147d8bc454815ef9ac998878d30cc3055449f7fd4c0"
+dependencies = [
+ "embedded-io",
+]
+
+[[package]]
 name = "embedded-registers"
 version = "0.9.13"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -621,7 +647,7 @@ dependencies = [
 
 [[package]]
 name = "orca-rs"
-version = "0.1.1"
+version = "0.1.2"
 dependencies = [
  "anyhow",
  "binrw",
@@ -629,9 +655,10 @@ dependencies = [
  "bytemuck",
  "crc",
  "defmt",
+ "embedded-io-adapters",
+ "embedded-io-async",
  "embedded-registers",
  "futures",
- "log",
  "num_enum",
  "rmodbus",
  "serde",

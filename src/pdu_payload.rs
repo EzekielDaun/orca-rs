@@ -1,4 +1,6 @@
+extern crate alloc;
 use crate::register_map::OrcaModeOfOperation;
+use alloc::{vec, vec::Vec};
 use binrw::{BinRead, BinWrite, binrw, io::Cursor};
 use bondrewd::Bitfields;
 use num_enum::{IntoPrimitive, TryFromPrimitive};

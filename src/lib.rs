@@ -1,26 +1,31 @@
+#![no_std]
+extern crate alloc;
+use alloc::{vec, vec::Vec};
 pub mod pdu_payload;
 pub mod register_map;
 use embedded_registers::Register;
-use log;
 use rmodbus::{ModbusProto, client::ModbusRequest, guess_response_frame_len};
-use tokio::io::{AsyncReadExt, AsyncWriteExt};
 
 use crate::pdu_payload::*;
 use crate::register_map::*;
 
-pub struct OrcaMotor {
-    pub port: tokio_serial::SerialStream,
+pub struct OrcaMotor<T> {
+    pub port: T,
     pub mreq: ModbusRequest,
 }
 
-impl OrcaMotor {
-    pub fn new(port: tokio_serial::SerialStream) -> Self {
+impl<T> OrcaMotor<T>
+where
+    T: embedded_io_async::Read + embedded_io_async::Write + Unpin,
+    <T as embedded_io_async::ErrorType>::Error: Send + Sync + 'static,
+{
+    pub fn new(port: T) -> Self {
         Self {
             port,
             mreq: ModbusRequest::new(1, ModbusProto::Rtu),
         }
     }
-    pub fn new_with_slave(port: tokio_serial::SerialStream, slave: u8) -> Self {
+    pub fn new_with_slave(port: T, slave: u8) -> Self {
         Self {
             port,
             mreq: ModbusRequest::new(slave, ModbusProto::Rtu),
@@ -77,10 +82,8 @@ impl OrcaMotor {
 
         let mut buf = vec![0u8; adu.num_response_bytes()];
         self.port.read_exact(&mut buf).await?;
-        log::debug!("Response: {buf:?}");
 
         let response_adu = OrcaHighSpeedResponseADU::from_bytes(&buf)?;
-        log::debug!("Response ADU parsed: {response_adu:?}");
 
         if adu.slave_address != response_adu.slave_address {
             anyhow::bail!("Slave address mismatch");
